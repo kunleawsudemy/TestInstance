@@ -4,7 +4,7 @@
 #   )
 # }
 
-resource "aws_key_pair" "Stack_KP" {
+resource "aws_key_pair" "JenkinsKP" {
 key_name   = "JenkinsKP"
 public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
