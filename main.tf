@@ -4,8 +4,8 @@
 #   )
 # }
 
-resource "aws_key_pair" "JenkinsKP" {
-key_name   = "JenkinsKP"
+resource "aws_key_pair" "JenkinsKP1" {
+key_name   = "JenkinsKP1"
 public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
 
@@ -122,7 +122,7 @@ resource "aws_instance" "DDog_Server" {
   #subnet_id                   = var.subnets[0]
   subnet_id                   = var.subnets[count.index]
   user_data                   = data.template_file.bootstrap.rendered 
-  key_name = aws_key_pair.JenkinsKP.key_name
+  key_name = aws_key_pair.JenkinsKP1.key_name
   iam_instance_profile        = data.aws_iam_instance_profile.ssm-instance-prof.name
   root_block_device {
     volume_type               = "gp2"
