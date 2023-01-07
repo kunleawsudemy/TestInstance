@@ -41,8 +41,8 @@ pipeline {
          stage('Deploy into Dev'){
              steps {
                  //sh "returnStatus: true, script: 'terraform workspace new dev'"
-                //  sh "terraform apply -auto-approve"
-                   sh "terraform destroy -input=false -auto-approve"
+                   sh "terraform apply -auto-approve"
+                //    sh "terraform destroy -input=false -auto-approve"
                 //   sh "terraform apply  -input=false tfplan"
              }
          }
