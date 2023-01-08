@@ -9,6 +9,12 @@ DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${Datadog_API_Key} DD_SITE="datadoghq.com" b
 sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 
 sudo systemctl status amazon-ssm-agent
+sudo amazon-linux-extras install php8.0 mariadb10.5
+sudo yum install -y httpd
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+
 
 # New Line added 11/18/2022
 #LAMP Server Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
