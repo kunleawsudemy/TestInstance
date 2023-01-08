@@ -1,8 +1,8 @@
 pipeline {
     agent any
-//  parameters {
-//   credentials credentialType: 'com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl', defaultValue: 'AWS_CREDS_AUTOMATION_ACCT', name: 'AWS_AUTOMATION_ACCOUNT_CRED', required: false
-// }
+    parameters {
+        credentials credentialType: 'com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl', defaultValue: '', name: 'AWS', required: false
+}
 
     environment {
         PATH = "${PATH}:${getTerraformPath()}"
@@ -41,8 +41,8 @@ pipeline {
          stage('Deploy into Dev'){
              steps {
                  //sh "returnStatus: true, script: 'terraform workspace new dev'"
-                //    sh "terraform apply -auto-approve"
-                    sh "terraform destroy -input=false -auto-approve"
+                    sh "terraform apply -auto-approve"
+                    // sh "terraform destroy -input=false -auto-approve"
                 //   sh "terraform apply  -input=false tfplan"
              }
          }
