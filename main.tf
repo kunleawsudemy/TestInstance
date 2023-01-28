@@ -4,17 +4,54 @@
 #   )
 # }
 
-resource "aws_key_pair" "JenkinsKP1" {
-key_name   = "JenkinsKP1"
-public_key = file(var.PATH_TO_PUBLIC_KEY)
+# resource "aws_key_pair" "JenkinsKP" {
+# key_name   = "JenkinsKP"
+# public_key = file(var.PATH_TO_PUBLIC_KEY)
+# }
+
+# New Line added by Kunle Adex 01/27/2023
+resource "aws_iam_role" "ssmrole" {
+  name = "ssmrole"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+  tags = {
+    Name = "ssmrole"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ssmcustomepolicy" {
+  role = aws_iam_role.ssmrole.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "instance_profile"
+  role = aws_iam_role.ssmrole.name
 }
 
 
-#DATA SOURCES
 
-data "aws_iam_instance_profile" "ssm-instance-prof" {
-  name = "AmazonSSMRoleForInstancesQuickSetup" 
-}
+# #DATA SOURCES
+# data "aws_iam_instance_profile" "ssm-instance-prof" {
+#   name = "AmazonSSMManagedInstanceCore" 
+# }
+
+# data "aws_iam_instance_profile" "ssm-instance-prof" {
+#   name = "AmazonSSMRoleForInstancesQuickSetup" 
+# }
 
 #Extract Secrets
 
@@ -68,52 +105,6 @@ resource "aws_security_group_rule" "egress" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
-# resource "aws_security_group_rule" "http" {
-#   security_group_id = aws_security_group.datadog-sg.id
-#   type              = "egress"
-#   protocol          = "tcp"
-#   from_port         = 80
-#   to_port           = 80
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }
-
-# resource "aws_security_group_rule" "https" {
-#   security_group_id = aws_security_group.datadog-sg.id
-#   type              = "egress"
-#   protocol          = "tcp"
-#   from_port         = 443
-#   to_port           = 443
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }
-
-# resource "aws_security_group_rule" "dns" {
-#   security_group_id = aws_security_group.datadog-sg.id
-#   type              = "egress"
-#   protocol          = "tcp"
-#   from_port         = 53
-#   to_port           = 53
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }
-
-# resource "aws_security_group_rule" "smtp" {
-#   security_group_id = aws_security_group.datadog-sg.id
-#   type              = "egress"
-#   protocol          = "tcp"
-#   from_port         = 25
-#   to_port           = 25
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }
-
-# resource "aws_security_group_rule" "oracle" {
-#   security_group_id = aws_security_group.datadog-sg.id
-#   type              = "egress"
-#   protocol          = "tcp"
-#   from_port         = 1521
-#   to_port           = 1521
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }
-
-
 resource "aws_instance" "DDog_Server" {
   ami                         = var.ami
   count                       = length(var.subnets)
@@ -122,8 +113,8 @@ resource "aws_instance" "DDog_Server" {
   #subnet_id                   = var.subnets[0]
   subnet_id                   = var.subnets[count.index]
   user_data                   = data.template_file.bootstrap.rendered 
-  key_name = aws_key_pair.JenkinsKP1.key_name
-  iam_instance_profile        = data.aws_iam_instance_profile.ssm-instance-prof.name
+  #key_name = aws_key_pair.JenkinsKP.key_name
+  iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
   root_block_device {
     volume_type               = "gp2"
     volume_size               = 10
