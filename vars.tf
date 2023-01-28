@@ -19,7 +19,7 @@ variable "AWS_REGION" {
 # }
 
 variable "vpc_id"{
-    default="vpc-0f2915ed752fcc764"
+    default="vpc-0aafcdb1fc41c5923"
 }
 
 
@@ -34,7 +34,7 @@ variable "instance_type"{
 variable "subnets" {
   type = list(string)
   default=[
-    "subnet-0be397f18fe1a5dcb"
+    "subnet-0e0ede8e1934b5d13"
    ]
 }
 
